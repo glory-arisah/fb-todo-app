@@ -30,6 +30,18 @@ const AuthProvider = ({children}) => {
     setError('')
   }
 
+  const loginUser = async (email, password) => {
+    try {
+      await auth.signInWithEmailAndPassword(email, password)
+    } catch (err) {
+      setError(err.message)
+    } 
+  }
+
+  const logoutUser = () => {
+    return auth.signOut()
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setCurrentUser(user)
@@ -39,7 +51,9 @@ const AuthProvider = ({children}) => {
 
   const value = {
     currentUser,
-    signupUser
+    signupUser,
+    loginUser,
+    logoutUser
   }
 
   return (
