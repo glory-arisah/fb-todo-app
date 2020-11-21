@@ -9,14 +9,12 @@ export const useAuth = () => {
 
 const AuthProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({displayName: '', email: '', password: ''})
-  const [error, setError] = useState('')
 
   const signupUser = async (displayName, email, password) => {
-    try {
-      await auth.createUserWithEmailAndPassword(email, password)
-      auth.currentUser.updateProfile({
-        displayName
-      })
+    await auth.createUserWithEmailAndPassword(email, password)
+    return await auth.currentUser.updateProfile({
+      displayName
+    })
     .then(function() {
       db.collection('users').add({
         displayName,
@@ -24,22 +22,14 @@ const AuthProvider = ({children}) => {
         password
       })
     })
-    } catch(err) {
-      setError(err.message)
-    }
-    setError('')
   }
 
   const loginUser = async (email, password) => {
-    try {
-      await auth.signInWithEmailAndPassword(email, password)
-    } catch (err) {
-      setError(err.message)
-    } 
+    return auth.signInWithEmailAndPassword(email, password)
   }
 
-  const logoutUser = () => {
-    return auth.signOut()
+  const logoutUser = async () => {
+    return await auth.signOut()
   }
 
   useEffect(() => {

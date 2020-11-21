@@ -11,8 +11,6 @@ function Signup() {
   const [loading, setLoading] = useState(false)
   const { signupUser, currentUser } = useAuth()
   const history = useHistory()
-  console.log(currentUser, history)
-  
 
   const onChangeHandler = (event) => {
     const { name, value } = event.target
@@ -38,10 +36,10 @@ function Signup() {
       setError('')
       setLoading(true)
       await signupUser(displayName, email, password)
-      history.push("/profile-page")
-    } catch(error) {
-      setError(error.message)
-      console.log(error.message)
+      history.replace("/")
+    } catch (err) {
+      console.log(err.message)
+      setError(err.message)
     }
     setLoading(false)
   }

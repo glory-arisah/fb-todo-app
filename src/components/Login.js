@@ -7,6 +7,7 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const history = useHistory()
   const { loginUser, currentUser } = useAuth()
   console.log(currentUser)
@@ -14,23 +15,30 @@ function Login() {
   const onChangeHandler = event => {
     const { name, value } = event.target
 
-    if (name === 'email') {
-      setEmail(value)
-    } else if (name === 'password') {
-      setPassword(value)
-    }
+      if (name === 'email') {
+        setEmail(value)
+      } else if (name === 'password') {
+        setPassword(value)
+      }
   }
 
   const handleLogin = async (e) => {
     e.preventDefault()
-    
-    try {
-      await loginUser(email, password)
-        history.push("/profile-page")
-    } catch(error) {
-      console.log(error)
-      setError(error.message)
+
+    if (password.length < 6) {
+      setError('Password must be more than six characters')
+      setLoading(false)
     }
+  
+    try {
+      setLoading(true)
+      await loginUser(email, password)
+      history.replace("/")
+    } catch (err) {
+      setError(err.message)
+      setLoading(false)
+    }
+    setLoading(false)
   }
 
   return (
@@ -55,7 +63,7 @@ function Login() {
           </Form.Group>
           <br/>
           <Form.Group>
-            <Button type="submit" className="btn btn-primary btn-block btn-lg">Log In</Button>
+            <Button type="submit" className="btn btn-primary btn-block btn-lg" disabled={loading}>Log In</Button>
           </Form.Group>
         </Form>
         <br/>
