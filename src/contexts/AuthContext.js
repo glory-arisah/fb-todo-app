@@ -29,12 +29,18 @@ const AuthProvider = ({children}) => {
   }
 
   const logoutUser = async () => {
-    return await auth.signOut()
+    return auth.signOut()
+  }
+
+  const resetPassword = email => {
+    return auth.sendPasswordResetEmail(email)
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user)
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setCurrentUser(user)
+      }
     })
     return () => unsubscribe()
   }, [])
@@ -43,7 +49,8 @@ const AuthProvider = ({children}) => {
     currentUser,
     signupUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    resetPassword
   }
 
   return (

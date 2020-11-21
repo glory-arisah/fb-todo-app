@@ -12,7 +12,6 @@ const NavigationBar = () => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="ml-auto">
           <Nav.Link href="/login"><p onClick={logoutUser}>Logout</p></Nav.Link>
-          <Nav.Link href="/update-profile">Update Profile</Nav.Link>
         </Nav>
       </Navbar.Collapse>
   </Navbar>

@@ -21,24 +21,11 @@ const ProfilePage = () => {
             
             <div className="d-flex justify-content-between">
             <Button onClick={<Redirect to="/" />}>Lists</Button>
-              <Button>Update Profile</Button>
             </div>
           </div>
          <br/>
         </div>
       </div>
-
-
-      {/* <div className="signup-form">      
-        <div className="row">
-          <div className=" text-center">
-            <div className="row">
-                <div className="col-lg-12 col-sm-12 col-12 profile-header"></div>
-            </div>
-            
-        </div>
-        </div>
-      </div> */}
     </Container>
   )
 }

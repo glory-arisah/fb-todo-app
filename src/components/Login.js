@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from "react-router-dom";
 import { Form, Button, InputGroup, Alert } from "react-bootstrap";
-import { useAuth } from "../contexts/AuthContext"
+import { useAuth } from "../contexts/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -33,19 +33,19 @@ function Login() {
     try {
       setLoading(true)
       await loginUser(email, password)
-      history.replace("/")
+      history.push("/")
     } catch (err) {
       setError(err.message)
       setLoading(false)
     }
     setLoading(false)
   }
-
+  
   return (
     <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh"}}>
       <div className="signup-form">	
         <Form style={{maxHeight: "750px"}} onSubmit={e => handleLogin(e)}>
-          <h2>Log In</h2>
+          <h2 className="text-uppercase">Log In</h2>
           {error && <Alert variant="danger">{error}</Alert>}
           <br/>
           <Form.Group>
@@ -63,8 +63,9 @@ function Login() {
           </Form.Group>
           <br/>
           <Form.Group>
-            <Button type="submit" className="btn btn-primary btn-block btn-lg" disabled={loading}>Log In</Button>
+            <Button type="submit" className="btn btn-primary btn-block btn-md" disabled={loading}>Sign In With Email</Button>
           </Form.Group>
+          <br />
         </Form>
         <br/>
         <div className="d-flex justify-content-between">
