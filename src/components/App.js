@@ -11,10 +11,11 @@ function App() {
     <Router>
       <Switch>
         <ProtectedRoute exact path="/" component={HomePage} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/login" component={Login} />
-        <Route path="/profile-page" component={ProfilePage}/>
-        <Route path="/forgot-password" component={ForgotPassword} />
+        <Route exact path="/signup" component={Signup} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/profile-page" component={ProfilePage}/>
+        <Route exact path="/forgot-password" component={ForgotPassword} />
+        <Route path="*" component={() => "404 NOT FOUND"} />
       </Switch>
     </Router>
   );

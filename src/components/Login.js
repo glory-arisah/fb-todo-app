@@ -9,7 +9,7 @@ function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const history = useHistory()
-  const { loginUser, currentUser } = useAuth()
+  const { loginUser, currentUser, loginWithGoogle } = useAuth()
   console.log(currentUser)
 
   const onChangeHandler = event => {
@@ -40,6 +40,16 @@ function Login() {
     }
     setLoading(false)
   }
+
+  const googleSignIn = async (event) => {
+    event.preventDefault()
+    try {
+      await loginWithGoogle()
+      history.push("/")
+    } catch (err) {
+      setError(err.message)
+    }
+  }
   
   return (
     <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh"}}>
@@ -64,6 +74,9 @@ function Login() {
           <br/>
           <Form.Group>
             <Button type="submit" className="btn btn-primary btn-block btn-md" disabled={loading}>Sign In With Email</Button>
+          </Form.Group>
+          <Form.Group>
+            <Button className="bg-danger btn btn-primary btn-block btn-md" disabled={loading} onClick={e => googleSignIn(e)}>Sign In With Google</Button>
           </Form.Group>
           <br />
         </Form>

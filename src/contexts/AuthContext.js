@@ -1,5 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { auth, db } from "../firebase";
+import firebase from "firebase";
+import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext()
 
@@ -10,9 +12,11 @@ export const useAuth = () => {
 const AuthProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({displayName: '', email: '', password: ''})
 
+  const history = useHistory()
+
   const signupUser = async (displayName, email, password) => {
     await auth.createUserWithEmailAndPassword(email, password)
-    return await auth.currentUser.updateProfile({
+    await auth.currentUser.updateProfile({
       displayName
     })
     .then(function() {
@@ -24,22 +28,42 @@ const AuthProvider = ({children}) => {
     })
   }
 
-  const loginUser = async (email, password) => {
-    return auth.signInWithEmailAndPassword(email, password)
+  const loginWithGoogle = async (props) => {
+    const provider = await new firebase.auth.GoogleAuthProvider()
+    await auth.signInWithPopup(provider)
+    .then((res) => {
+      const currentUser = res.user
+      console.log(currentUser)
+      let userObj = {
+        displayName: currentUser.displayName,
+        email: currentUser.email,
+        uid: currentUser.uid
+      }
+      localStorage.setItem('GDrive', JSON.stringify(userObj))
+    })
+    .then(res => {
+      console.log(res)
+    })
   }
 
-  const logoutUser = async () => {
-    return auth.signOut()
+  const loginUser = async (email, password) => {
+    return auth.signInWithEmailAndPassword(email, password)
   }
 
   const resetPassword = email => {
     return auth.sendPasswordResetEmail(email)
   }
 
+  const logout = () => {
+    return auth.signOut()
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setCurrentUser(user)
+      } else {
+        setCurrentUser(null)
       }
     })
     return () => unsubscribe()
@@ -49,8 +73,9 @@ const AuthProvider = ({children}) => {
     currentUser,
     signupUser,
     loginUser,
-    logoutUser,
-    resetPassword
+    resetPassword,
+    loginWithGoogle,
+    logout
   }
 
   return (
