@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { auth, db } from "../firebase";
 import firebase from "firebase";
-import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext()
 
@@ -12,19 +11,31 @@ export const useAuth = () => {
 const AuthProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState({displayName: '', email: '', password: ''})
 
-  const history = useHistory()
+  const addUserDocumenmt = async (currentUser) => {
+    if (!currentUser) return null;
+    const userRef = db.doc(`users/${currentUser.uid}`)
+    const snapshot = await userRef.get()
+
+    if (!snapshot.exist) {
+      const { displayName, email } = currentUser
+      const timeCreated = new Date()
+      
+      try {
+        await userRef.set({
+          displayName, 
+          email,
+          timeCreated
+        }, { merge: true })
+      } catch(error) {
+        console.lgog(error.message)
+      }
+    }
+  }
 
   const signupUser = async (displayName, email, password) => {
     await auth.createUserWithEmailAndPassword(email, password)
     await auth.currentUser.updateProfile({
       displayName
-    })
-    .then(function() {
-      db.collection('users').add({
-        displayName,
-        email,
-        password
-      })
     })
   }
 
@@ -32,7 +43,7 @@ const AuthProvider = ({children}) => {
     const provider = await new firebase.auth.GoogleAuthProvider()
     await auth.signInWithPopup(provider)
     .then((res) => {
-      const currentUser = res.user
+      var currentUser = res.user
       console.log(currentUser)
       let userObj = {
         displayName: currentUser.displayName,
@@ -40,9 +51,6 @@ const AuthProvider = ({children}) => {
         uid: currentUser.uid
       }
       localStorage.setItem('GDrive', JSON.stringify(userObj))
-    })
-    .then(res => {
-      console.log(res)
     })
   }
 
@@ -62,6 +70,7 @@ const AuthProvider = ({children}) => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         setCurrentUser(user)
+        addUserDocumenmt(user)
       } else {
         setCurrentUser(null)
       }

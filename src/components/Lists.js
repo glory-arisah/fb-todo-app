@@ -2,38 +2,39 @@ import React, { useState, useEffect } from 'react';
 import { ListGroup, Container,Button, Modal, Form, InputGroup } from "react-bootstrap";
 import ListItem from "./ListItem";
 import { db, auth } from "../firebase";
+import { useAuth } from "../contexts/AuthContext"
 import firebase from "firebase";
 
 const Lists = () => {
+  const { currentUser } = useAuth()
   const [listName, setListName] = useState('')
   const [lists, setLists] = useState([])
   const [show, setShow] = useState(false)
-  console.log(auth.currentUser)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
   
   useEffect(() => {
     // this code fires when the lists.js loads and watchs for any changes in the database, or concerning a given dependency
-    db.collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+    db.collection('users').doc(currentUser.uid).collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
       setLists(snapshot.docs.map(doc => ({ id: doc.id , listName: doc.data().listName } )))
     })
-  }, [])
+  }, [currentUser.uid])
 
   const addList = (event, listName) => {
     event.preventDefault()
-    
-    db.collection('lists').add({
+    const { uid, displayName } = auth.currentUser
+
+    db.collection('users').doc(currentUser.uid).collection('lists').add({
       listName,
-      userReference: db.doc(`users/${auth.currentUser.uid}`),
-      userName: auth.currentUser.displayName,
+      userRef: uid,
+      userName: displayName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
-    
-    setLists([...lists, listName])
+
+    setLists([...lists ,listName])
     setListName('')
     handleClose()
   }
-  console.log(lists, listName)
 
   const handleKeyPress = (event) => {
     if (event.target.charCode === 13) {

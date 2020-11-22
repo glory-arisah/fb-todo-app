@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
 import { ListGroupItem, Button, Modal, Form, InputGroup, Container } from "react-bootstrap";
+import { useAuth } from "../contexts/AuthContext";
 import { db } from '../firebase';
 
 const ListItem = ({ listItem }) => {
+  const { currentUser } = useAuth()
   const [editListName, setEditListName] = useState(listItem.listName)
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-  console.log(editListName)
-  
+
   const deleteListItem = () => {
-    db.collection('lists').doc(listItem.id).delete()
+    db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).delete()
   }
   
   const updateListName = (event) => {
     event.preventDefault()
-    db.collection('lists').doc(listItem.id).set({
+    db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).set({
       listName: editListName
       }, { merge: true })
       handleClose()
   }
 
   const handleKeyPress = (event) => {
-    if (event.target.charCode==13) {
+    if (event.target.charCode===13) {
       return
     }
   }
