@@ -38,7 +38,6 @@ function Signup() {
       await signupUser(displayName, email, password)
       history.push("/")
     } catch (err) {
-      console.log(err.message)
       setError(err.message)
     }
     setLoading(false)

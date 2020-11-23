@@ -10,7 +10,6 @@ function Login() {
   const [loading, setLoading] = useState(false)
   const history = useHistory()
   const { loginUser, currentUser, loginWithGoogle } = useAuth()
-  console.log(currentUser)
 
   const onChangeHandler = event => {
     const { name, value } = event.target

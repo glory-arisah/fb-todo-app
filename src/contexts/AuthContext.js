@@ -27,7 +27,6 @@ const AuthProvider = ({children}) => {
           timeCreated
         }, { merge: true })
       } catch(error) {
-        console.log(error.message)
       }
     }
   }
@@ -43,7 +42,6 @@ const AuthProvider = ({children}) => {
     await auth.signInWithPopup(provider)
     .then((res) => {
       var currentUser = res.user
-      console.log(currentUser)
       let userObj = {
         displayName: currentUser.displayName,
         email: currentUser.email,

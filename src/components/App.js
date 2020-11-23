@@ -10,7 +10,6 @@ import Tasks from "./Tasks";
 
 function App() {
   const taskPath=`lists/tasks`
-  console.log(taskPath)
   return (
     <Router>
       <Switch>
