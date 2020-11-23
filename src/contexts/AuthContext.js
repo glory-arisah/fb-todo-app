@@ -27,11 +27,10 @@ const AuthProvider = ({children}) => {
           timeCreated
         }, { merge: true })
       } catch(error) {
-        console.lgog(error.message)
+        console.log(error.message)
       }
     }
   }
-
   const signupUser = async (displayName, email, password) => {
     await auth.createUserWithEmailAndPassword(email, password)
     await auth.currentUser.updateProfile({

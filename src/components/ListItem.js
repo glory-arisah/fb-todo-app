@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ListGroupItem, Button, Modal, Form, InputGroup, Container } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from '../firebase';
+import { Link } from "react-router-dom";
 
 const ListItem = ({ listItem }) => {
   const { currentUser } = useAuth()
@@ -13,7 +14,6 @@ const ListItem = ({ listItem }) => {
   const deleteListItem = () => {
     db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).delete()
   }
-  
   const updateListName = (event) => {
     event.preventDefault()
     db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).set({
@@ -28,11 +28,14 @@ const ListItem = ({ listItem }) => {
     }
   }
 
+  const taskPath = `/lists/${listItem.id}/tasks`
+
   return (
     <div>
       <ListGroupItem className="d-flex justify-content-between w-100">
         {listItem.listName}
         <div className="d-flex justify-content-around w-50">
+          <Link to={taskPath}><Button className="bg-info border-0"><i className="fa fa-eye"></i> tasks</Button></Link>
           <Button className="bg-dark border-0"><i className="fa fa-plus"> task</i></Button>
           <Button variant="info" onClick={() => handleShow() } className="bg-success border-0"><i className="fa fa-pencil"></i></Button>
           <Button className="bg-danger border-0" onClick={deleteListItem}><i className="fa fa-trash"></i></Button>

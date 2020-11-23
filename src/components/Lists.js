@@ -15,7 +15,7 @@ const Lists = () => {
   
   useEffect(() => {
     // this code fires when the lists.js loads and watchs for any changes in the database, or concerning a given dependency
-    db.collection('users').doc(currentUser.uid).collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+    db.collection('users').doc(`${currentUser.uid}`).collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
       setLists(snapshot.docs.map(doc => ({ id: doc.id , listName: doc.data().listName } )))
     })
   }, [currentUser.uid])
@@ -23,14 +23,14 @@ const Lists = () => {
   const addList = (event, listName) => {
     event.preventDefault()
     const { uid, displayName } = auth.currentUser
-
+    
     db.collection('users').doc(currentUser.uid).collection('lists').add({
       listName,
       userRef: uid,
       userName: displayName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
-
+    
     setLists([...lists ,listName])
     setListName('')
     handleClose()
