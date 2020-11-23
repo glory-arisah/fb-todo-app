@@ -13,7 +13,7 @@
 <h3>Features</h3>
 <hr>
 <ul>
-  <li>User authenticated ie required to create lists</li>
+  <li>User authentication is required to create lists</li>
 
   <li>Lists can be added easily from the home page by 
   clicking on 'Add list' button</li>
@@ -24,10 +24,10 @@
 
 </ul>
 
-<span style="fon-weight:10;">From the repo</span>
+<span style="font-weight:10;">From the repo</span>
 
 <ol>
-  <li>git clone ``</li>
+  <li>git clone `git@github.com:glory-arisah/fb-todo-app.git`</li>
 
   <li>run `npm i firebase react-bootstrap bootstrap react-router-dom`</li>
 
