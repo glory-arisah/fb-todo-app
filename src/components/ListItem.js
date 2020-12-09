@@ -14,10 +14,11 @@ const ListItem = ({ listItem }) => {
   const deleteListItem = () => {
     db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).delete()
   }
-  const updateListName = (event) => {
+
+  const updateListName = async (event) => {
     event.preventDefault()
-    db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).set({
-      listName: editListName
+    await db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).set({
+     listName: editListName
       }, { merge: true })
       handleClose()
   }
@@ -28,17 +29,14 @@ const ListItem = ({ listItem }) => {
     }
   }
 
-  const taskPath = `/lists/${listItem.id}/tasks`
-
   return (
     <div>
-      <ListGroupItem className="d-flex justify-content-between w-100">
+      <ListGroupItem key={listItem.id} className="d-flex justify-content-between">
         {listItem.listName}
         <div className="d-flex justify-content-around w-50">
-          <Link to={taskPath}><Button className="bg-info border-0"><i className="fa fa-eye"></i> tasks</Button></Link>
-          <Button className="bg-dark border-0"><i className="fa fa-plus"> task</i></Button>
+          <Link to={`/lists/${listItem.id}/tasks`}><Button className="bg-info border-0"><i className="fa fa-eye"></i> tasks</Button></Link>
           <Button variant="info" onClick={() => handleShow() } className="bg-success border-0"><i className="fa fa-pencil"></i></Button>
-          <Button className="bg-danger border-0" onClick={deleteListItem}><i className="fa fa-trash"></i></Button>
+          <Button className="bg-danger border-0" onClick={() => deleteListItem()}><i className="fa fa-trash"></i></Button>
         </div>
       </ListGroupItem>
       <Modal show={show} onHide={handleClose} centered="true" >

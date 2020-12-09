@@ -1,6 +1,6 @@
 import React from 'react';
+import NavigationBar from './NavigationBar'
 import { useAuth } from "../contexts/AuthContext";
-import NavigationBar from "./NavigationBar";
 import Lists from "./Lists";
 
 const HomePage = () => {
@@ -9,7 +9,7 @@ const HomePage = () => {
   return (
     <>
       <NavigationBar />
-      <h3 className="mt-3">Welcome { currentUser && currentUser.displayName }</h3>
+      <h4 className="mt-4 ml-3 text-5 text-lg">Welcome { currentUser && currentUser.displayName }</h4>
       <Lists />
     </>
   )

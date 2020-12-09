@@ -1,54 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import TaskItem from "./TaskItem";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import { useAuth } from "../contexts/AuthContext";
-import { ListGroup, Button, Modal, Container, Form, InputGroup } from 'react-bootstrap';
-import ListItem from './ListItem';
+import { ListGroup, Button, Modal, Container, Form, InputGroup, Alert } from 'react-bootstrap';
+import { useParams, Link } from 'react-router-dom';
+import TaskItem from './TaskItem';
+import firebase from 'firebase';
+import NavigationBar from "./NavigationBar";
 
-const Task = () => {
+const Tasks = () => {
   const { currentUser } = useAuth()
+  const { listId } = useParams()
+  const [isLoading, setIsLoading] = useState(true)
+  const [tasks, setTasks] = useState([])
   const [taskName, setTaskName] = useState('')
   const [checkedValue, setCheckedValue] = useState(false)
-  const [tasks, setTasks] = useState([])
   const [show, setShow] = useState(false)
-  const [listId, setListId] = useState('')
-  const [taskId, setTaskId] = useState('')
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-  
-  useEffect(() => {
-    const unsubscribe = db.collection('users').doc(currentUser.uid).collection('lists')
-    .get()
-    .then((snapshot) => {
-      snapshot.forEach((doc) => {
-        setListId(doc.id)
-      })
-    })
-      return unsubscribe
-  }, [currentUser.uid, setListId])
 
   useEffect(() => {
-    const unsubscribe = db.collection('users').doc(`${currentUser.uid}`).collection('lists')
-    .doc(listId).collection('tasks').get()
-    .then((snapshot) => {
-      snapshot.forEach((doc) => {
-        setTaskId(doc.id)
-      })
-    
+    const unsubscribe = db.collection('users').doc(currentUser.uid).collection('lists').doc(listId).collection('tasks').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      setTasks(snapshot.docs.map(doc => ({taskId: doc.id, taskName: doc.data().taskName, checkedValue: doc.data().checkedValue })))
+      setIsLoading(false)
     })
-    return unsubscribe
-  }, [listId, currentUser.uid])
+
+    return () => { unsubscribe() }
+   }, [currentUser.uid])
 
   const addTask = (event, taskName, checkedValue) => {
     event.preventDefault()
-    db.collection('users').doc(currentUser.uid).collection('lists').doc(listId).id.collection('tasks').set({
+    db.collection('users').doc(currentUser.uid).collection('lists').doc(listId).collection('tasks').add({
       taskName,
-      checked: checkedValue,
-      listRef: db.collection('users').doc(currentUser.uid).collection('lists')
+      checkedValue,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
     })
-    setTasks([...tasks, taskName])
     setTaskName('')
+    setTasks([...tasks, {taskName}])
     handleClose()
+  }
+
+  const deleteAllTasks = () => {
+    db.collection('users').doc(currentUser.uid).collection('lists').doc(listId).collection('tasks')
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        doc.ref.delete()
+      })
+    })
   }
 
   const handleKeyPress = (event) => {
@@ -58,38 +56,57 @@ const Task = () => {
   }
 
   return (
-    <div className="mt-5">
-      <ListGroup>
-        {tasks.map(task => (
-          <ListItem TaskItem={task} key={task.id} />
-        ))}
-      </ListGroup>bnvjhm
-      <TaskItem />
-      <Modal show={show} onHide={() => handleClose()} centered="true" >
-        <Modal.Header closeButton>
-          <Modal.Title>Add a task</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Container>
-            <Form>
-              <InputGroup>
-                <Form.Control type="text" name="listName" value={taskName} placeholder="Enter a task name" onChange={e => setTaskName(e.target.value)} onKeyPress={event => handleKeyPress(event)} />
-              </InputGroup>
-              <Button disabled={!taskName} type="submit" variant="primary" onClick={e => addTask(e, taskName)}>
-                Add Task
-              </Button>
-            </Form>
-          </Container>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => handleClose()}>
-            Close
+    <>
+      <NavigationBar />
+      <div className="mt-5">
+        { isLoading ? <Alert variant='success' className='ml-auto mr-auto text-center w-50'>Loading ...</Alert>: '' }
+        { !isLoading && !tasks.length ? <Alert variant="danger" className='ml-auto mr-auto text-center w-50'>You have no tasks</Alert> : '' }
+        <ListGroup key={listId}>
+          {tasks.map(task => (
+            <TaskItem key={task.taskId} listId={listId} taskItem={task} />
+          ))}
+        </ListGroup>
+        <div className="d-flex justify-content-around mt-4 ml-2">
+          <Button variant="info" onClick={() => handleShow()}>
+            Add Task
           </Button>
-          
-        </Modal.Footer>
-      </Modal>
-    </div>
+          <Link to='/'>
+            <Button className='bg-danger' onClick={() => deleteAllTasks()}>
+              Back to lists
+            </Button>
+          </Link>
+          <Button className='bg-danger' onClick={() => deleteAllTasks()}>
+            Delete All
+          </Button>
+        </div>
+        
+        <Modal show={show} onHide={() => handleClose()} centered="true" >
+          <Modal.Header closeButton>
+            <Modal.Title>Add a task</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Container>
+              <Form>
+                <InputGroup>
+                  <Form.Control type="text" name="listName" value={taskName} onChange={e => setTaskName(e.target.value)} placeholder="Enter a task name" onKeyPress={event => handleKeyPress(event)} />
+                </InputGroup>
+                <Button disabled={!taskName} type="submit" variant="primary" onClick={e => addTask(e, taskName, checkedValue)}>
+                  Add Task
+                </Button>
+                
+              </Form>
+            </Container>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => handleClose()}>
+              Close
+            </Button>
+            
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </>
   )
 }
 
-export default Task
+export default Tasks

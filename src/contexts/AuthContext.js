@@ -8,7 +8,7 @@ export const useAuth = () => {
   return useContext(AuthContext)
 }
 
-const AuthProvider = ({children}) => {
+const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState({displayName: '', email: '', password: ''})
 
   const addUserDocumenmt = async (currentUser) => {
@@ -30,6 +30,7 @@ const AuthProvider = ({children}) => {
       }
     }
   }
+
   const signupUser = async (displayName, email, password) => {
     await auth.createUserWithEmailAndPassword(email, password)
     await auth.currentUser.updateProfile({
@@ -37,18 +38,9 @@ const AuthProvider = ({children}) => {
     })
   }
 
-  const loginWithGoogle = async (props) => {
-    const provider = await new firebase.auth.GoogleAuthProvider()
+  const loginWithGoogle = async () => {
+    const provider = new firebase.auth.GoogleAuthProvider()
     await auth.signInWithPopup(provider)
-    .then((res) => {
-      var currentUser = res.user
-      let userObj = {
-        displayName: currentUser.displayName,
-        email: currentUser.email,
-        uid: currentUser.uid
-      }
-      localStorage.setItem('GDrive', JSON.stringify(userObj))
-    })
   }
 
   const loginUser = async (email, password) => {
@@ -64,7 +56,7 @@ const AuthProvider = ({children}) => {
   }
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setCurrentUser(user)
         addUserDocumenmt(user)
