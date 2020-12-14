@@ -42,12 +42,15 @@ function Login() {
 
   const googleSignIn = async (event) => {
     event.preventDefault()
+    setLoading(true)
     try {
       await loginWithGoogle()
       history.push("/")
     } catch (err) {
       setError(err.message)
+      setLoading(false)
     }
+    setLoading(false)
   }
   
   return (

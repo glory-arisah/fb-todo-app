@@ -12,12 +12,12 @@ const ListItem = ({ listItem }) => {
   const handleShow = () => setShow(true)
 
   const deleteListItem = () => {
-    db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).delete()
+    db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.listId).delete()
   }
 
   const updateListName = async (event) => {
     event.preventDefault()
-    await db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.id).set({
+    await db.collection('users').doc(currentUser.uid).collection('lists').doc(listItem.listId).set({
      listName: editListName
       }, { merge: true })
       handleClose()
@@ -31,10 +31,10 @@ const ListItem = ({ listItem }) => {
 
   return (
     <div>
-      <ListGroupItem key={listItem.id} className="d-flex justify-content-between">
+      <ListGroupItem key={listItem.listId} className="d-flex justify-content-between">
         {listItem.listName}
         <div className="d-flex justify-content-around w-50">
-          <Link to={`/lists/${listItem.id}/tasks`}><Button className="bg-info border-0"><i className="fa fa-eye"></i> tasks</Button></Link>
+          <Link to={`/lists/${listItem.listId}/tasks`}><Button className="bg-info border-0"><i className="fa fa-eye"></i> tasks</Button></Link>
           <Button variant="info" onClick={() => handleShow() } className="bg-success border-0"><i className="fa fa-pencil"></i></Button>
           <Button className="bg-danger border-0" onClick={() => deleteListItem()}><i className="fa fa-trash"></i></Button>
         </div>

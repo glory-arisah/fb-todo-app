@@ -13,10 +13,10 @@ const Lists = () => {
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-  
+
   useEffect(() => {
-    const unsubscribe = db.collection('users').doc(`${currentUser.uid}`).collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-      setLists(snapshot.docs.map(doc => ({ id: doc.id , listName: doc.data().listName } )))
+    const unsubscribe = db.collection('users').doc(currentUser.uid).collection('lists').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+      setLists(snapshot.docs.map(doc => ({ listId: doc.id , listName: doc.data().listName } )))
       setIsLoading(false)
     })
     return () => unsubscribe()
@@ -24,12 +24,10 @@ const Lists = () => {
 
   const addList = (event, listName) => {
     event.preventDefault()
-    
     db.collection('users').doc(currentUser.uid).collection('lists').add({
       listName,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     })
-    
     setLists([...lists ,listName])
     setListName('')
     handleClose()
@@ -59,7 +57,7 @@ const Lists = () => {
       <div className="mt-4">
         <ListGroup>
           {lists.map(list => (
-            <ListItem listItem={list} key={list.id} />
+            <ListItem listItem={list} key={list.listId} />
         ))}
         </ListGroup>
         <div className="d-flex justify-content-around mt-4 ml-2">

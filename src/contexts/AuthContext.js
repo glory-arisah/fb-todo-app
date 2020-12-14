@@ -18,16 +18,10 @@ const AuthProvider = ({ children }) => {
 
     if (!snapshot.exist) {
       const { displayName, email } = currentUser
-      const timeCreated = new Date()
-      
-      try {
-        await userRef.set({
-          displayName, 
-          email,
-          timeCreated
-        }, { merge: true })
-      } catch(error) {
-      }
+      await userRef.set({
+        displayName,
+        email
+      }, { merge: true })
     }
   }
 

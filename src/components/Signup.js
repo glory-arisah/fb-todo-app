@@ -26,7 +26,6 @@ function Signup() {
 
   const handleSignup = async e => {
     e.preventDefault()
-    
     if(password.length < 6) {
       setError('Password must be more than six characters')
       return

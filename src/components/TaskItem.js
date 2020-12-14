@@ -2,31 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ListGroupItem, Button, Modal, Form, InputGroup, Container } from "react-bootstrap";
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
-import { useLists } from '../contexts/ListContext';
 
 const TaskItem = ({ taskItem, listId }) => {
   const { currentUser } = useAuth()
-  // const { getUserLists } = useLists
-  const [lists, setLists] = useState([])
-  const [listName, setListName] = useState('')
   const [isChecked, setIsChecked] = useState(taskItem.checkedValue)
   const [editTaskName, setEditTaskName] = useState(taskItem.taskName)
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const handleShow = () => setShow(true)
-  
-  useEffect(() => {
-    // getUserLists()
-  }, [])
-
-  useEffect(() => {
-    // console.log(lists)
-    const currentList = lists.find((list) => 
-      list.id === listId   
-    )
-    // console.log(currentList)
-    // setListName(currentList.listName)
-  }, [])
 
   const deleteTask = () => {
     db.collection('users').doc(`${currentUser.uid}/lists/${listId}/tasks/${taskItem.taskId}`).delete()
@@ -56,9 +39,9 @@ const TaskItem = ({ taskItem, listId }) => {
   return (
     <>
       <ListGroupItem key={taskItem.taskId} className="d-flex justify-content-between">
-        <div className='d-flex align-items-center w-25 justify-content-around'>
+        <div className='mt-0 mb-0 task-holder d-flex w-100 justify-content-start align-items-center'>
           <input type="checkbox" checked={isChecked} onChange={(e) => checkBoxValue(e)} className='task-checked-value' />
-          {taskItem.taskName}
+          <span className='ml-3'>{taskItem.taskName}</span>
         </div>
         <div className="d-flex justify-content-around w-50">
           <Button variant="info" className="bg-success border-0" onClick={() => handleShow()}><i className="fa fa-pencil"></i></Button>
