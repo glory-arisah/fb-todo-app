@@ -8,20 +8,22 @@
 
 <p>This app allows users create lists for their to-dos</p>
 
-<p>LIVE LINK : <a href="https://fb-todo-app-20347.web.app" style="font-weight:bold;">https://fb-todo-app-20347.web.app</a></p>
+<p>LIVE LINK : <a href="https://fb-todo-app-20347.web.app" style="font-weight:bolder;">https://fb-todo-app-20347.web.app</a></p>
 
 <h3>Features</h3>
 <hr>
 <ul>
   <li>User authentication is required to create lists</li>
 
-  <li>Lists can be added easily from the home page by 
-  clicking on 'Add list' button</li>
+  <li>Users are able to create lists from the home page by clicking on 'Add list' button</li>
 
-  <li>List can also easily be edited and deleted by clicking the respective icons attached to each list item</li>
+  <li>A list item can also be edited and deleted by clicking on the respective icons</li>
 
   <li>Lists are sorted based on the time they were created</li>
 
+  <li>Users are able to assign tasks to a specific list item</li>
+
+  <li>Just like the list items, tasks can also be created, updated, deleted and even checked on completion</li>
 </ul>
 
 <span style="font-weight:10;">From the repo</span>
@@ -36,10 +38,12 @@
   <li>run `npm start` to visit the application</li>
 </ol>
 
-<h3>Intende features</h3>
+<h3>Intended features</h3>
 
 <ol>
-  <li>Ability to add tasks to each list</li>
-
   <li>Error handling</li>
+
+  <li>Timer function for each task</li>
+
+  <li>Email notification when lists and tasks are created and when tasks are about to expire</li>
 </ol>
